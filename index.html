@@ -23,7 +23,6 @@
         </form>
         <p>¿Ya tienes una cuenta? <a href="#" onclick="mostrarLoginForm()">Iniciar sesión</a></p>
     </div>
-    
     <!-- Formulario de Inicio de Sesión -->
     <div id="loginForm" style="display: none;">
         <h2>Iniciar Sesión</h2>
@@ -38,6 +37,13 @@
     </div>
 
     <div id="mensaje"></div>
+
+    <button id="cerrarSesionBtn" type="button" onclick="cerrarSesion()" style="display: none;">Cerrar Sesión</button>
+
+    <div id="jarros-container" class="productos-container"></div>
+    <div id="camisetas-container" class="productos-container"></div>
+    <div id="llaveros-container" class="productos-container"></div>
+
     <script src="backend.js" defer></script>
 </body>
 </html>

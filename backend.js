@@ -46,3 +46,51 @@ app.post('/login', async (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
 });
+
+const Producto = mongoose.model('Producto', {
+    tipo: String,
+    nombre: String,
+    imagenPath: String,
+});
+
+// Añadir algunos productos a la base de datos (esto puede ir en una ruta específica)
+const productosIniciales = [
+    { tipo: 'jarro', nombre: 'Jarro de porcelana llano', imagenPath: 'images/jarro-de-porcelana-llano.jpg' },
+    { tipo: 'jarro', nombre: 'Jarro de porcelana con cuchara', imagenPath: 'images/jarro-de-porcelana-con-cuchara.jpg' },
+    { tipo: 'jarro', nombre: 'Jarro de porcelana grande', imagenPath: 'images/jarra-de-porcelana-grande.jpg' },
+    { tipo: 'camiseta', nombre: 'Camiseta Polo', imagenPath: 'images/camiseta-polo.jpg' },
+    { tipo: 'camiseta', nombre: 'Camiseta cuello redondo', imagenPath: 'images/camiseta-cuello-redondo.jpg' },
+    { tipo: 'camiseta', nombre: 'Camiseta cuello en V', imagenPath: 'images/camiseta-llana-cuello-v.png' },
+    { tipo: 'llavero', nombre: 'Llavero estándar', imagenPath: 'images/llavero-std.jpeg' },
+    { tipo: 'llavero', nombre: 'Llavero circular', imagenPath: 'images/llavero-circular.jpg' },
+    { tipo: 'llavero', nombre: 'Llavero con forma de corazón', imagenPath: 'images/llavero-corazon.jpeg' },
+];
+
+Producto.countDocuments({})
+    .then(count => {
+        if (count === 0) {
+            // La colección está vacía, insertar productos
+            return Producto.insertMany(productosIniciales);
+        } else {
+            console.log('La colección de productos ya contiene documentos. No se insertaron productos iniciales.');
+            return Promise.resolve(); // Resuelve la promesa sin hacer nada
+        }
+    })
+    .then(productos => {
+        if (productos) {
+            console.log('Productos insertados:', productos);
+        }
+    })
+    .catch(error => {
+        console.error('Error al verificar/insertar productos:', error);
+    });
+
+// Endpoint para obtener todos los productos
+app.get('/productos', async (req, res) => {
+    try {
+        const productos = await Producto.find({});
+        res.send(productos);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});

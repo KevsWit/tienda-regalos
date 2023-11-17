@@ -1,0 +1,18 @@
+/* Ajusta el estilo según tus necesidades */
+
+.productos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.producto {
+    width: 200px;
+    margin: 10px;
+    text-align: center;
+}
+
+.producto img {
+    max-width: 100%;
+    height: auto;
+}

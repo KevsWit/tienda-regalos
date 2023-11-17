@@ -1,3 +1,4 @@
+let sesionIniciada = false;
 async function registrarUsuario() {
     const nombre = document.getElementById('nombre').value;
     const telefono = document.getElementById('telefono').value;
@@ -27,8 +28,65 @@ async function registrarUsuario() {
     document.getElementById('contrasenaRegistro').value = '';
 }
 
+async function obtenerProductos() {
+    try {
+        const response = await fetch('http://localhost:3000/productos');
+        const productos = await response.json();
+        return productos;
+    } catch (error) {
+        console.error('Error al obtener productos:', error);
+        return [];
+    }
+}
+
+async function mostrarProductos() {
+    const productos = await obtenerProductos();
+
+    const jarrosContainer = document.getElementById('jarros-container');
+    const camisetasContainer = document.getElementById('camisetas-container');
+    const llaverosContainer = document.getElementById('llaveros-container');
+
+    productos.forEach(producto => {
+        const elementoProducto = document.createElement('div');
+        elementoProducto.className = 'producto';
+        elementoProducto.innerHTML = `
+            <img src="${producto.imagenPath}" alt="${producto.nombre}">
+            <p>${producto.nombre}</p>
+        `;
+
+        switch (producto.tipo) {
+            case 'jarro':
+                jarrosContainer.appendChild(elementoProducto);
+                break;
+            case 'camiseta':
+                camisetasContainer.appendChild(elementoProducto);
+                break;
+            case 'llavero':
+                llaverosContainer.appendChild(elementoProducto);
+                break;
+            default:
+                break;
+        }
+    });
+
+    // Añadir títulos a las secciones
+    agregarTituloSeccion('Jarros', jarrosContainer);
+    agregarTituloSeccion('Camisetas', camisetasContainer);
+    agregarTituloSeccion('Llaveros', llaverosContainer);
+}
+
+function agregarTituloSeccion(titulo, contenedor) {
+    const tituloElemento = document.createElement('h2');
+    tituloElemento.innerText = titulo;
+    contenedor.parentNode.insertBefore(tituloElemento, contenedor);
+}
 
 async function iniciarSesion() {
+    if (sesionIniciada) {
+        alert('Ya has iniciado sesión. Cierra sesión para volver a entrar.');
+        return;
+    }
+
     const emailLogin = document.getElementById('emailLogin').value;
     const contrasenaLogin = document.getElementById('contrasenaLogin').value;
 
@@ -46,9 +104,43 @@ async function iniciarSesion() {
     const result = await response.text();
     if (result === 'Ingreso satisfactorio') {
         document.getElementById('mensaje').innerText = `Sesión del usuario: ${emailLogin}`;
+        sesionIniciada = true; // Actualizar el estado de la sesión
+
+        // Deshabilitar formularios
+        document.getElementById('registroForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'none';
+
+        // Mostrar el botón de cerrar sesión
+        document.getElementById('cerrarSesionBtn').style.display = 'block';
+
+        // Llamar a la función para mostrar productos después del inicio de sesión
+        mostrarProductos();
     } else {
         alert('Credenciales incorrectas');
     }
+}
+
+function cerrarSesion() {
+    sesionIniciada = false; // Restablecer el estado de la sesión
+    document.getElementById('mensaje').innerText = ''; // Limpiar mensaje
+
+    // Mostrar formularios y ocultar contenedores de productos y botón de cerrar sesión
+    document.getElementById('registroForm').style.display = 'block';
+    document.getElementById('loginForm').style.display = 'none';
+    
+    ocultarContenedorYTitulo('jarros-container');
+    ocultarContenedorYTitulo('camisetas-container');
+    ocultarContenedorYTitulo('llaveros-container');
+
+    document.getElementById('cerrarSesionBtn').style.display = 'none';
+}
+
+function ocultarContenedorYTitulo(contenedorId) {
+    const contenedor = document.getElementById(contenedorId);
+    contenedor.style.display = 'none';
+    // Obtener el elemento hermano anterior (en este caso, el título) y ocultarlo
+    const titulo = contenedor.previousElementSibling;
+    titulo.style.display = 'none';
 }
 
 function mostrarLoginForm() {
@@ -60,3 +152,4 @@ function mostrarRegistroForm() {
     document.getElementById('registroForm').style.display = 'block';
     document.getElementById('loginForm').style.display = 'none';
 }
+
