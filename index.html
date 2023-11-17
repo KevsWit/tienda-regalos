@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Regalos App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="funciones.js" defer></script>
+</head>
+<body>
+    <!-- Formulario de Registro -->
+    <div id="registroForm" style="display: block;">
+        <h2>Registro de Usuario</h2>
+        <form id="registroUsuarioForm">
+            <label for="nombre">Nombre Completo:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono" required>
+            <label for="emailRegistro">Correo:</label>
+            <input type="email" id="emailRegistro" name="emailRegistro" required>
+            <label for="contrasenaRegistro">Contraseña:</label>
+            <input type="password" id="contrasenaRegistro" name="contrasenaRegistro" required>
+            <button type="button" onclick="registrarUsuario()">Registrarse</button>
+        </form>
+        <p>¿Ya tienes una cuenta? <a href="#" onclick="mostrarLoginForm()">Iniciar sesión</a></p>
+    </div>
+    
+    <!-- Formulario de Inicio de Sesión -->
+    <div id="loginForm" style="display: none;">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginUsuarioForm">
+            <label for="emailLogin">Correo:</label>
+            <input type="email" id="emailLogin" name="emailLogin" required>
+            <label for="contrasenaLogin">Contraseña:</label>
+            <input type="password" id="contrasenaLogin" name="contrasenaLogin" required>
+            <button type="button" onclick="iniciarSesion()">Iniciar Sesión</button>
+        </form>
+        <p>¿No tienes una cuenta? <a href="#" onclick="mostrarRegistroForm()">Registrarse</a></p>
+    </div>
+
+    <div id="mensaje"></div>
+    <script src="backend.js" defer></script>
+</body>
+</html>
