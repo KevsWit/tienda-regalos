@@ -38,6 +38,21 @@
 
     <div id="mensaje"></div>
 
+    <div id="compra"></div>
+
+    <div id="formularioDetalle" style="display: none;">
+        <h2 id="nombreProductoSeleccionado"></h2> <!-- Agregar un elemento para mostrar el nombre del producto -->
+        <form id="detallePedidoForm">
+            <label for="tamanio">Tamaño del grabado (cm):</label>
+            <input type="number" id="tamanio" name="tamanio" required>
+            <label for="contenido">Texto o Path:</label>
+            <input type="text" id="contenido" name="contenido" required>
+            <label for="direccionEnvio">Dirección de envío:</label>
+            <input type="text" id="direccionEnvio" name="direccionEnvio" required>
+            <button type="button" onclick="enviarPedido()">Enviar Pedido</button>
+        </form>
+    </div>
+
     <button id="cerrarSesionBtn" type="button" onclick="cerrarSesion()" style="display: none;">Cerrar Sesión</button>
 
     <div id="jarros-container" class="productos-container"></div>

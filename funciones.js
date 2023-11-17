@@ -1,4 +1,6 @@
 let sesionIniciada = false;
+let user = "";
+let nombreProductoSeleccionado = "";
 async function registrarUsuario() {
     const nombre = document.getElementById('nombre').value;
     const telefono = document.getElementById('telefono').value;
@@ -36,6 +38,80 @@ async function obtenerProductos() {
     } catch (error) {
         console.error('Error al obtener productos:', error);
         return [];
+    }
+}
+
+async function enviarPedido() {
+    const nombreProducto = document.getElementById('nombreProductoSeleccionado').innerText;
+    const tamanio = parseFloat(document.getElementById('tamanio').value);
+    const contenido = document.getElementById('contenido').value;
+    const direccionEnvio = document.getElementById('direccionEnvio').value;
+    const correoUsuario = user;
+
+    // Calcular el costo
+    const costo = contenido.length * 0.8 + tamanio * 1.01;
+
+    const mensaje = `Vamos a enviar el ${nombreProducto} con grabado de ${tamanio} cm, con "${contenido}" como contenido a ${direccionEnvio} por el valor de ${costo.toFixed(2)}. Cualquier queja o cancelación del servicio, comunicarse a reclamos@regalos.com en un plazo de 1 día.`;
+
+    alert(mensaje);
+
+    // Guardar la información en la colección "pedidos"
+    const pedido = {
+        nombreProducto,
+        tamanio,
+        contenido,
+        costo,
+        correoUsuario,
+        direccionEnvio,
+    };
+
+    await guardarPedidoEnColeccion(pedido);
+
+    // Limpiar el formulario después de enviarlo
+    const formularioDetalle = document.getElementById('formularioDetalle');
+    formularioDetalle.querySelector('#tamanio').value = '';
+    formularioDetalle.querySelector('#contenido').value = '';
+    formularioDetalle.querySelector('#direccionEnvio').value = '';
+}
+
+async function guardarPedidoEnColeccion(pedido) {
+    try {
+        const response = await fetch('http://localhost:3000/pedidos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pedido),
+        });
+
+        const result = await response.text();
+        console.log(result);
+    } catch (error) {
+        console.error('Error al guardar el pedido:', error);
+    }
+}
+
+// Agregar evento de clic a las imágenes de productos
+document.addEventListener('click', function (event) {
+    if (event.target.tagName === 'IMG') {
+        nombreProductoSeleccionado = event.target.alt;
+        actualizarNombreProductoSeleccionado();
+
+        // Mostrar el formulario automáticamente
+        document.getElementById('formularioDetalle').style.display = 'block';
+    }
+});
+
+// Actualizar el nombre del producto seleccionado en el formulario
+function actualizarNombreProductoSeleccionado() {
+    const nombreProductoElemento = document.getElementById('nombreProductoSeleccionado');
+    nombreProductoElemento.innerText = nombreProductoSeleccionado;
+
+    // Verificar si el usuario ha iniciado sesión
+    if (sesionIniciada) {
+        // Puedes realizar aquí cualquier otra acción que necesites al seleccionar un producto
+    } else {
+        alert('Debes iniciar sesión para realizar un pedido.');
     }
 }
 
@@ -105,6 +181,7 @@ async function iniciarSesion() {
     if (result === 'Ingreso satisfactorio') {
         document.getElementById('mensaje').innerText = `Sesión del usuario: ${emailLogin}`;
         sesionIniciada = true; // Actualizar el estado de la sesión
+        user=emailLogin;
 
         // Deshabilitar formularios
         document.getElementById('registroForm').style.display = 'none';
@@ -122,11 +199,14 @@ async function iniciarSesion() {
 
 function cerrarSesion() {
     sesionIniciada = false; // Restablecer el estado de la sesión
+    user = "";
+    nombreProductoSeleccionado = "";
     document.getElementById('mensaje').innerText = ''; // Limpiar mensaje
 
     // Mostrar formularios y ocultar contenedores de productos y botón de cerrar sesión
     document.getElementById('registroForm').style.display = 'block';
     document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('formularioDetalle').style.display = 'none';
     
     ocultarContenedorYTitulo('jarros-container');
     ocultarContenedorYTitulo('camisetas-container');

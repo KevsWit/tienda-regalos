@@ -94,3 +94,25 @@ app.get('/productos', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
+const Pedido = mongoose.model('Pedido', {
+    nombreProducto: String,
+    tamanio: Number,
+    contenido: String,
+    costo: Number,
+    correoUsuario: String,
+    direccionEnvio: String,
+});
+
+// ...
+
+// Endpoint para guardar un pedido
+app.post('/pedidos', async (req, res) => {
+    try {
+        const pedido = new Pedido(req.body);
+        await pedido.save();
+        res.send('Pedido guardado exitosamente');
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
